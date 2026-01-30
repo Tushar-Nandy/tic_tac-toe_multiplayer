@@ -1,4 +1,4 @@
-const socket = io("http://localhost:3000");
+const socket = io("https://your-tic-tac-toe.onrender.com");
 
 // UI elements
 const buttons = document.getElementsByTagName("button");
