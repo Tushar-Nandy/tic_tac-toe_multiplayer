@@ -1,4 +1,4 @@
-const socket = io("https://your-tic-tac-toe.onrender.com");
+const socket = io();
 
 // UI elements
 const buttons = document.getElementsByTagName("button");
