@@ -1,31 +1,24 @@
+// "http://localhost:3000"
+
 const socket = io();
 
-// UI elements
-const buttons = document.getElementsByTagName("button");
+const buttons = document.querySelectorAll(".box");
 const turnDisplay = document.getElementById("turn");
 const roleDisplay = document.getElementById("role");
 const restartBtn = document.getElementById("restart");
 
+const chatBox = document.getElementById("chat-messages");
+const chatInput = document.getElementById("chat-text");
+const chatSend = document.getElementById("send-chat");
+
 let myRole = null;
 let gameState = null;
 
-/* =========================
-   SOCKET LISTENERS
-========================= */
 socket.on("player", role => {
   myRole = role;
-
-  if (role === "spectator") {
-    roleDisplay.innerText = "You are spectating";
-    roleDisplay.style.color = "gray";
-    return;
-  }
-
-  roleDisplay.innerText = `You are Player ${role}`;
-  roleDisplay.style.fontWeight = "bold";
-
-  if (role === "X") roleDisplay.style.color = "red";
-  if (role === "O") roleDisplay.style.color = "blue";
+  roleDisplay.innerText =
+    role === "spectator" ? "Spectator" : `You are ${role}`;
+  roleDisplay.style.color = role === "X" ? "red" : role === "O" ? "blue" : "gray";
 });
 
 socket.on("state", state => {
@@ -33,25 +26,27 @@ socket.on("state", state => {
   render(state);
 });
 
-/* =========================
-   RENDER FUNCTION
-========================= */
+socket.on("chat", msg => {
+  const div = document.createElement("div");
+  div.innerText = msg;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
+});
+
 function render(state) {
-  // Hide restart button by default
   restartBtn.style.display = "none";
 
-  for (let i = 0; i < 9; i++) {
-    buttons[i].innerText = state.board[i] || "";
-    buttons[i].classList.remove("disappear");
-  }
+  buttons.forEach((btn, i) => {
+    btn.innerText = state.board[i] || "";
+    btn.classList.remove("about-to-disappear");
+  });
 
-  // Highlight disappearing symbol
-  if (state.disappearing !== null) {
-    buttons[state.disappearing].classList.add("disappear");
+  if (!state.gameOver && state.aboutToDisappear !== null) {
+    buttons[state.aboutToDisappear].classList.add("about-to-disappear");
   }
 
   if (state.gameOver) {
-    turnDisplay.innerText = `${state.turn} wins!`;
+    turnDisplay.innerText = `${state.winner} wins!`;
     restartBtn.style.display = "block";
     return;
   }
@@ -62,30 +57,23 @@ function render(state) {
     return;
   }
 
-  // Show whose turn
-  if (myRole === "spectator") {
-    turnDisplay.innerText = `Turn: ${state.turn}`;
-  } else if (myRole === state.turn) {
-    turnDisplay.innerText = `Your turn (${state.turn})`;
-  } else {
-    turnDisplay.innerText = `Opponent's turn (${state.turn})`;
-  }
+  turnDisplay.innerText =
+    myRole === state.turn ? "Your turn" : `Turn: ${state.turn}`;
 }
 
-/* =========================
-   USER ACTIONS
-========================= */
-function handleMove(index) {
-  if (myRole === "spectator") return;
-  if (gameState.turn !== myRole) return;
-  socket.emit("move", index);
-}
-
-for (let i = 0; i < buttons.length; i++) {
-  buttons[i].addEventListener("click", () => handleMove(i));
-}
-
-// Restart button
-restartBtn.addEventListener("click", () => {
-  socket.emit("restart");
+buttons.forEach((btn, i) => {
+  btn.onclick = () => {
+    if (myRole === gameState.turn) {
+      socket.emit("move", i);
+    }
+  };
 });
+
+restartBtn.onclick = () => socket.emit("restart");
+
+chatSend.onclick = () => {
+  if (chatInput.value.trim()) {
+    socket.emit("chat", `${myRole}: ${chatInput.value}`);
+    chatInput.value = "";
+  }
+};

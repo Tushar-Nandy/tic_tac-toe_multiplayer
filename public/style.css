@@ -1,52 +1,165 @@
-body{
-    background-color: black;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+/* ===== GLOBAL ===== */
+* {
+  box-sizing: border-box;
 }
-h1,h2,h3{
-    color:palevioletred;
-    text-align: center;
-}
-.container{
-    height: 455px;
-    width: 455px;
-    display: grid;
-    background-color: palevioletred;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    border: 1px solid palevioletred;
-}
-.box{
-    height: 150px;
-    width: 150px;
-    background-color: black;
 
+body {
+  margin: 0;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: "Caveat Brush", cursive;
 }
-button{
-    color: red;
-    font-size: 30px;
-    font-family: "Caveat Brush", cursive;
+
+/* ===== HEADINGS ===== */
+h1, h2, h3 {
+  color: palevioletred;
+  text-align: center;
+  margin: 8px 0;
+}
+
+/* ===== MAIN APP LAYOUT ===== */
+.app {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 16px;
+}
+
+/* ===== GAME SECTION ===== */
+.game {
+  text-align: center;
+}
+
+/* Game grid */
+.container {
+  width: 300px;
+  height: 300px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background-color: palevioletred;
+  border: 2px solid palevioletred;
+  margin: 10px auto;
+}
+
+/* Game buttons */
+.box {
+  background-color: black;
+  border: none;
+  color: red;
+  font-size: 48px;
   font-weight: 700;
-  font-style: italic;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-.gone-next{
-    color: pink;
-    font-size: 30px;
-    font-family: "Caveat Brush", cursive;
-    font-weight: 700;
-    font-style: italic;
+.box:hover {
+  background-color: #111;
 }
 
+/* Oldest symbol indicator */
+.gone-next {
+  color: pink;
+}
+
+/* Disappearing animation */
 .disappear {
-  animation: fadeOut 0.5s ease;
+  animation: fadeOut 0.6s ease;
   color: gray;
-  font-weight: bold;
 }
 
 @keyframes fadeOut {
-  0% { opacity: 1; }
-  100% { opacity: 0.3; }
+  from { opacity: 1; }
+  to { opacity: 0.3; }
+}
+
+/* Restart button */
+#restart {
+  margin-top: 10px;
+  padding: 8px 16px;
+  font-size: 20px;
+  background: black;
+  border: 2px solid palevioletred;
+  color: palevioletred;
+  cursor: pointer;
+}
+
+#restart:hover {
+  background: palevioletred;
+  color: black;
+}
+
+/* ===== CHAT SECTION ===== */
+.chat {
+  width: 280px;
+  border: 2px solid palevioletred;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #0a0a0a;
+}
+
+/* Chat messages */
+#chat-messages {
+  height: 260px;
+  overflow-y: auto;
+  border: 1px solid #555;
+  padding: 6px;
+  background-color: black;
+  margin-bottom: 8px;
+  color: white;
+  font-size: 16px;
+}
+
+/* Chat input area */
+.chat-input {
+  display: flex;
+  gap: 6px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 6px;
+  background-color: black;
+  border: 1px solid palevioletred;
+  color: white;
+  outline: none;
+}
+
+.chat-input button {
+  padding: 6px 10px;
+  background-color: palevioletred;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* ===== RESPONSIVE (PHONES) ===== */
+@media (max-width: 768px) {
+  .app {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chat {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .container {
+    width: 260px;
+    height: 260px;
+  }
+
+  .box {
+    font-size: 40px;
+  }
+}
+.about-to-disappear {
+  opacity: 0.45;
+  filter: grayscale(80%);
+  outline: 2px dashed palevioletred;
+  transition: all 0.25s ease;
 }
